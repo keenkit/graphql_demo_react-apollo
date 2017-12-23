@@ -15,7 +15,7 @@ interface EventData {
 
 const SALT_ROUNDS = 10
 
-export default async (event: FunctionEvent) => {
+export default async (event: FunctionEvent<EventData>) => {
   console.log(event)
 
   try {
@@ -30,7 +30,7 @@ export default async (event: FunctionEvent) => {
 
     // check if user exists already
     const userExists: boolean = await getUser(api, email)
-      .then(r => r.User !== null)
+        .then(r => r.User !== null)
     if (userExists) {
       return { error: 'Email already in use' }
     }
@@ -68,7 +68,7 @@ async function getUser(api: GraphQLClient, email: string): Promise<{ User }> {
   return api.request<{ User }>(query, variables)
 }
 
-async function createGraphcoolUser(api: GraphQLClient, email: string, password: string, name: string): Promise {
+async function createGraphcoolUser(api: GraphQLClient, email: string, password: string, name: string): Promise<string> {
   const mutation = `
     mutation createGraphcoolUser($email: String!, $password: String!, $name: String!) {
       createUser(
@@ -88,5 +88,5 @@ async function createGraphcoolUser(api: GraphQLClient, email: string, password: 
   }
 
   return api.request<{ createUser: User }>(mutation, variables)
-    .then(r => r.createUser.id)
+      .then(r => r.createUser.id)
 }
